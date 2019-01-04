@@ -1,0 +1,137 @@
+<div class="container-fluid main-container">
+  <div class="row">
+    <div  class="col-md-4 users-container">
+      <div *ngIf="conversations.length > 0" class="conversations-container">
+          <h3>Conversations</h3>
+          <ng-container *ngFor="let conversation of conversations" >
+<div (click)="selectedConversation(conversation)" class="div">
+{{conversation.conversationId}}</div>           
+          </ng-container>
+      </div>
+     
+
+    <hr>
+    <h3>Users</h3>
+    <hr>
+    <div class="user-list">
+      <ng-container *ngFor="let user of users" >
+          <div *ngIf="user != username" (click)="startChat(user)" class="user-item">
+              {{user}}
+            </div>
+      </ng-container>
+
+ 
+  
+    </div>
+    </div>
+
+    <div class="col-md-8 chat-container">
+     <div class="chat-box">
+
+      <div *ngIf="!usernameFlag" class="username d-flex align-items-center justify-content-center">
+          <mat-form-field class="example-full-width">
+            <input matInput [(ngModel)]="username" (keyup.enter)="setUsername()" placeholder="Enter your Username" value="Sushi">
+            <mat-icon  (click)="setUsername()" matSuffix>send</mat-icon>
+
+          </mat-form-field>
+
+      </div>
+
+      <div class="div">
+        Hello, {{username}}
+      </div>
+      <button (click)="sendMessage()">Send</button>
+      <div *ngIf="usernameFlag" class="send-message">
+        <mat-form-field class="full-width">
+          <textarea matInput placeholder="Leave a comment"></textarea>
+          <mat-icon  (click)="sendMessage()" matSuffix>send</mat-icon>
+
+        </mat-form-field>
+
+      </div>
+    
+    
+     </div>
+    </div>
+  </div>
+</div>
+
+
+import { Component, OnInit } from '@angular/core';
+import {ChatService} from '../chat.service'
+import * as io from 'socket.io-client';
+
+@Component({
+  selector: 'app-home-page',
+  templateUrl: './home-page.component.html',
+  styleUrls: ['./home-page.component.scss']
+})
+export class HomePageComponent implements OnInit {
+username:any;
+socket = io('http://localhost:3220');
+users:any;
+usernameFlag=false;
+conversations = [];
+  constructor(private chat:ChatService) { }
+
+  ngOnInit() {
+    // this.initSocket()
+    this.getUsers();
+    this.socket.on('hey',data => {
+      console.log(data)
+    })
+ }
+
+  setUsername(){
+    this.chat.newUser(this.username)
+    this.usernameFlag = true;  
+    this.getConversations()
+  }
+
+
+ getUsers(){
+  this.socket.on('getUsers',data => {
+     console.log(data)
+    this.users = data;
+   })
+}
+
+getConversations(){
+  this.socket.on('getConversations',data => {
+    let totalConversations = data.conversations;
+    this.conversations = [];
+    totalConversations.forEach(doc => {
+     if(doc.members.includes(this.username)){
+       this.conversations.push(doc)
+       console.log(this.conversations)
+     }
+    })
+  })
+}
+
+startChat(username){
+  this.socket.emit('newChat',{
+    from:this.username,
+    to:username,
+    msg:'Hola'
+  })
+
+}
+
+
+selectedConversation(conversation){
+console.log(conversation)
+this.socket.emit('getConversations',conversation)
+}
+
+sendMessage(){
+  console.log('Sending Message')
+  this.socket.emit('sendMessage',{
+    from:this.username,
+    to:'Test',
+    msg:'Hola'
+  })
+}
+ }
+
+

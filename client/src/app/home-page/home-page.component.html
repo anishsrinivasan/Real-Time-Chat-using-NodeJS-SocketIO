@@ -1,0 +1,122 @@
+<div class="container-fluid main-container">
+  <div class="row">
+    <div class="col-md-4 users-container">
+      <div *ngIf="usernameFlag" class="div">
+        Hello, {{username}}
+      </div>
+      <hr>
+      <h3>Users</h3>
+      <hr>
+      <div class="user-list">
+
+        <ng-container *ngIf="checkUserNotifications">
+          <ng-container *ngFor="let user of users">
+            <ng-container *ngIf="user.username != username">
+              <div (click)="clearUserCount(user)" class="user-item">
+                {{user.username}} - <span>{{user.userCount}}</span>
+              </div>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+
+        <ng-container *ngIf="!checkUserNotifications">
+          <ng-container *ngFor="let user of users">
+            <ng-container *ngIf="user.username != username">
+              <div (click)="clearUserCount(user)" class="user-item">
+                {{user.username}}
+              </div>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+
+
+
+      </div>
+    </div>
+
+    <div class="col-md-8 chat-container">
+      <div class="chat-box">
+
+        <div *ngIf="!usernameFlag" class="username ">
+
+          <div class="user-box text-center">
+            <h4>Hola Chat!</h4>
+            <hr>
+            <mat-form-field class="example-full-width">
+              <input matInput [(ngModel)]="username" (keyup.enter)="setUsername()" placeholder="Enter your Username"
+                value="Sushi">
+            </mat-form-field>
+            <hr>
+            <h6>Options</h6>
+            <br>
+            <section class="example-section">
+              <mat-checkbox class="example-margin" [(ngModel)]="checkReadBy">Read By</mat-checkbox>
+              <br>
+              <mat-checkbox class="example-margin" [(ngModel)]="checkUserNotifications">User Notifications</mat-checkbox>
+              <br>
+              <mat-checkbox class="example-margin" [(ngModel)]="checkBrowserActiveFlag">Check Browser Active</mat-checkbox>
+
+            </section>
+            <hr>
+            <button (click)="setUsername()" mat-raised-button color="primary">Start</button>
+
+
+
+          </div>
+
+        </div>
+
+
+
+        <div *ngIf="usernameFlag" class="messages">
+          <ng-container *ngFor="let message of messages">
+            <div *ngIf="message.msg" [ngClass]="{'sender-item':message.senderId == username,'receiver-item':message.senderId != username}"
+              class="message-item">
+              {{message.msg}}
+              <br>
+              <span class="senderId">{{message.senderId}}</span>
+            </div>
+          </ng-container>
+          <div *ngIf="readBy.length > 0 && checkReadBy" class="read-by-box text-right">
+
+
+            <div *ngFor="let user of readBy" class="read-by">
+              <ng-container *ngIf="user != username">
+                Read by {{user}}
+              </ng-container>
+
+            </div>
+          </div>
+          <div class="message-padding">
+
+          </div>
+
+        </div>
+        <div class="message-padding">
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="usernameFlag" class="send-message">
+
+
+  <div class="row">
+    <div class="col-md-4">
+
+    </div>
+    <div class="col-md-8 message-box">
+      <mat-form-field class="full-width">
+        <textarea matInput [(ngModel)]="message" (keyup.enter)="sendMessage()" placeholder="Leave a comment"></textarea>
+        <mat-icon matSuffix>send</mat-icon>
+
+      </mat-form-field>
+      <button mat-raised-button (click)="sendMessage()" color="primary">Send</button>
+
+
+    </div>
+  </div>
+
+</div>

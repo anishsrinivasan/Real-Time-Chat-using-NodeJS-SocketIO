@@ -1,0 +1,92 @@
+const session = require('express-session')
+const express = require('express')
+const http = require('http');
+var cors = require('cors');
+var router = express.Router();
+const socketIo = require('socket.io');
+var app = express();
+app.use(cors());
+var connections = [];
+var users = [];
+var usersList = {};
+var conversations = [];
+// Create Server for IO
+var server = http.Server(app);
+const io = socketIo(server)
+const uuidv1 = require('uuid/v1');
+io.on('connection',(socket) => {
+  console.log('New Connection')
+  connections.push(socket)
+  console.log(connections.length)
+
+  socket.on('disconnect',(socket)=> {
+    users.splice(users.indexOf(socket.username),1)
+    updateUserNames();
+    connections.splice(connections.indexOf(socket),1)
+    console.log('User Disconnected')
+    console.log(connections.length)
+  })
+
+  socket.on('newUser',(data)=> {
+    socket.username = data;
+    let username = data;
+    socket.join('room')
+    addToUsers(socket,username)
+    updateUserNames();
+  })
+
+  socket.on('newChat',(data)=> {
+    console.log(data)
+    let conversationId = uuidv1()
+    conversations.push({
+      members:[data.from,data.to],
+      msg:data.msg,
+      timestamp:new Date(),
+      conversationId:conversationId
+    })
+    socket.join(conversationId)
+    console.log(conversations)
+    updateConversations();
+  })
+
+  socket.on('sendMessage',(data)=> {
+    const socketId = usersList[data.to]
+    socket.emit('hey','ignore')
+    usersList[data.to].emit('hey',{
+      msg:data.msg,
+      name:data.name
+      });
+  
+  })
+
+
+})
+
+
+function updateConversations(){
+
+  io.emit('getConversations',{
+    conversations:conversations
+  })
+ 
+}
+
+function updateUserNames(){
+  io.emit('getUsers',users)
+}
+
+
+function addToUsers(socket,username){
+users.push(username)
+usersList[username]=socket;
+console.log(users,usersList)
+}
+
+
+
+app.use('/', router);
+app.listen(3000, () => console.log('Server Listening at 3000'))
+
+server.listen(3220, () => {
+  console.log('Server Listening at 3220')
+})
