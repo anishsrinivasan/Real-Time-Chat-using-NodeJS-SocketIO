@@ -87,14 +87,25 @@
 
             </div>
           </div>
-          <div class="message-padding">
+
+          <div *ngFor="let userTyping of typingBy" class="read-by text-center">
+            <ng-container *ngIf="userTyping != username">
+              {{userTyping}} is Typing
+            </ng-container>
 
           </div>
 
-        </div>
-        <div class="message-padding">
+          <div class="message-padding">
 
+          </div>
+          <div class="message-padding">
+
+            </div>
+          <div  #messagePadding class="messageJump">
+
+            </div>
         </div>
+     
       </div>
     </div>
   </div>
@@ -109,7 +120,7 @@
     </div>
     <div class="col-md-8 message-box">
       <mat-form-field class="full-width">
-        <textarea matInput [(ngModel)]="message" (keyup.enter)="sendMessage()" placeholder="Leave a comment"></textarea>
+        <textarea matInput [(ngModel)]="message" (keyup)="emitTyping()" (keyup.enter)="sendMessage()" placeholder="Leave a comment"></textarea>
         <mat-icon matSuffix>send</mat-icon>
 
       </mat-form-field>

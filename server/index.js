@@ -19,14 +19,6 @@ io.on('connection',(socket) => {
   connections.push(socket)
   console.log(connections.length)
 
-  socket.on('disconnect',(socket)=> {
-    users.splice(users.indexOf(socket.username),1)
-    updateUserNames();
-    connections.splice(connections.indexOf(socket),1)
-    console.log('User Disconnected')
-    console.log(connections.length)
-  })
-
 
   socket.on('newUser',(data)=> {
     socket.username = data;
@@ -35,6 +27,17 @@ io.on('connection',(socket) => {
     addToUsers(socket,username)
     updateUserNames();
   })
+
+  socket.on('disconnect',(socket)=> {
+    console.log(users)
+    users.splice(users.indexOf(socket.username),1)
+    console.log(users)
+    connections.splice(connections.indexOf(socket),1)
+    updateUserNames();
+    console.log('User Disconnected')
+    console.log(connections.length)
+  })
+
 
   socket.on('sendMessage',(data)=> {
     console.log(data)
@@ -48,7 +51,11 @@ io.on('connection',(socket) => {
 
   })
 
+  socket.on('emitTyping',(data)=> {
+    console.log(data)
+    io.emit('onTyping',data)
 
+  })
   
 
 
@@ -59,6 +66,8 @@ io.on('connection',(socket) => {
 function updateUserNames(){
   io.emit('getUsers',users)
 }
+
+
 
 
 function addToUsers(socket,username){

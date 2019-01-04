@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ChatService } from '../chat.service'
 import * as io from 'socket.io-client';
 import { MatSnackBar } from '@angular/material';
@@ -8,7 +8,10 @@ import { MatSnackBar } from '@angular/material';
   templateUrl: './home-page.component.html',
   styleUrls: ['./home-page.component.scss']
 })
+
 export class HomePageComponent implements OnInit {
+  @ViewChild('messagePadding') public messagePadding: ElementRef;
+
   username: any;
   socket = io('http://localhost:3220');
   users: any = [];
@@ -21,7 +24,7 @@ export class HomePageComponent implements OnInit {
   checkUserNotifications = true;
   checkBrowserActiveFlag = true;
   checkReadBy = true;
-
+  typingBy = [];
   constructor(private chat: ChatService, public snackBar: MatSnackBar) { }
 
   ngOnInit() {
@@ -32,7 +35,7 @@ export class HomePageComponent implements OnInit {
     })
     this.newMessage();
     this.messageRead();
-
+    this.onTyping();
   }
 
   setUsername() {
@@ -86,6 +89,7 @@ export class HomePageComponent implements OnInit {
         this.updateNotification(data)
         this.messages.push(data)
         this.readBy = [];
+        this.goToMessagePadding()
         if (data.senderId != this.username)
           this.openSnackBar('New Message from ' + data.senderId + '')
       }
@@ -142,6 +146,32 @@ export class HomePageComponent implements OnInit {
     this.snackBar.open(message, 'Dismiss', {
       duration: 2000,
     });
+  }
+
+  emitTyping() {
+    this.socket.emit('emitTyping', {
+      username: this.username
+    })
+  }
+
+  onTyping() {
+    this.socket.on('onTyping', data => {
+
+      if (!this.typingBy.includes(data.username)) {
+        this.typingBy.push(data.username)
+        console.log(this.typingBy)
+        setTimeout(() => {
+          this.typingBy = [];
+          console.log('Typing Done', this.typingBy)
+        }, 1000)
+      }
+
+    })
+  }
+
+  goToMessagePadding() {
+    this.messagePadding.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'start' });
+
   }
 
 
