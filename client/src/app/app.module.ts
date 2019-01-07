@@ -8,10 +8,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HomePageComponent } from './home-page/home-page.component';
 import { MatFormFieldModule,MatCheckboxModule, MatMenuModule,MatInputModule,MatFormFieldControl, MatToolbarModule, MatButtonModule, MatSidenavModule, MatIconModule, MatListModule, MatCardModule } from '@angular/material';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { GodModePageComponent } from './god-mode-page/god-mode-page.component';
 @NgModule({
   declarations: [
     AppComponent,
-    HomePageComponent
+    HomePageComponent,
+    GodModePageComponent
   ],
   imports: [
     BrowserModule,

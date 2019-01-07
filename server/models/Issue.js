@@ -1,10 +1,11 @@
 
 
-import mongoose from 'mongoose';
+const mongoose = require('mongoose')
 var Issue  = new mongoose.Schema({
-    filename:String,
-    path:String,
-    timestamp:Object
+    senderId:String,
+    msg:String,
+    timestamp:Object,
+    avatarId:String
 });
 
 module.exports = mongoose.model('Issue', Issue);

@@ -40,13 +40,29 @@
         <div *ngIf="!usernameFlag" class="username ">
 
           <div class="user-box text-center">
-            <h4>Hola Chat!</h4>
+            <h4>Hola!</h4>
             <hr>
             <mat-form-field class="example-full-width">
               <input matInput [(ngModel)]="username" (keyup.enter)="setUsername()" placeholder="Enter your Username"
                 value="Sushi">
             </mat-form-field>
             <hr>
+            <!-- Avatar Container -->
+            <h6>Choose your Avatar</h6>
+            <br>
+            <div class="avatar-list">
+              <div class="row">
+                <div (click)="setAvatar(avatar)" *ngFor="let avatar of avatarList" class="col-md-3">
+                  <img class="avatar-item" [ngClass]="{'full-opacity': avatar.id == avatarId}" [src]="avatar.path">
+                </div>
+
+              </div>
+            </div>
+
+            <!-- End of Avatar Container -->
+
+            <hr>
+
             <h6>Options</h6>
             <br>
             <section class="example-section">
@@ -68,14 +84,43 @@
 
 
 
-        <div *ngIf="usernameFlag" class="messages">
+        <div *ngIf="usernameFlag" class="messages d-flex flex-column">
           <ng-container *ngFor="let message of messages">
-            <div *ngIf="message.msg" [ngClass]="{'sender-item':message.senderId == username,'receiver-item':message.senderId != username}"
-              class="message-item">
-              {{message.msg}}
-              <br>
-              <span class="senderId">{{message.senderId}}</span>
-            </div>
+
+            <ng-container *ngIf="message.senderId != username">
+              <div *ngIf="message.msg" [class.ml-auto]="message.senderId == username" [ngClass]="{'ml-auto':message.senderId == username,'receiver-item':message.senderId != username}"
+                class="message-item d-flex align-items-center animated zoomInLeft">
+
+                <div class="avatar-img">
+                  <img class="chat-avatar" [src]="getAvatarPath(message.avatarId)">
+                </div>
+
+                <div class="message-info">
+                  {{message.msg}}
+                  <br>
+                  <span class="senderId">{{message.senderId}}</span>
+                  <br>
+                  <span class="timestamp">{{message.timestamp | date:'medium'}}</span>
+                </div>
+
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="message.senderId == username">
+              <div *ngIf="message.msg" [ngClass]="{'sender-item':message.senderId == username,'receiver-item':message.senderId != username,'ml-auto':message.senderId == username}"
+                class="message-item animated zoomInRight">
+
+                <div class="message-info">
+                  {{message.msg}}
+                  <br>
+                  <span class="timestamp">{{message.timestamp | date:'medium'}}</span>
+                </div>
+
+              </div>
+            </ng-container>
+
+
+
           </ng-container>
           <div *ngIf="readBy.length > 0 && checkReadBy" class="read-by-box text-right">
 
@@ -100,12 +145,12 @@
           </div>
           <div class="message-padding">
 
-            </div>
-          <div  #messagePadding class="messageJump">
+          </div>
+          <div #messagePadding class="messageJump">
 
-            </div>
+          </div>
         </div>
-     
+
       </div>
     </div>
   </div>

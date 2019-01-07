@@ -1,0 +1,55 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+
+<h2 class="text-center">God Speed!</h2>
+      <div class="messages">
+        <ng-container *ngFor="let message of messages">
+            <div *ngIf="message.msg"
+            class="message-item receiver-item d-flex align-items-center">
+
+            <div *ngIf="message.avatarId" class="avatar-img">
+              <img class="chat-avatar" [src]="getAvatarPath(message.avatarId)">
+            </div>
+
+            <div class="message-info">
+                {{message.msg}}
+                <br>
+                <span class="senderId">{{message.senderId}}</span>
+                <br>
+                <span class="timestamp">{{message.timestamp | date:'medium'}}</span>
+            </div>
+      
+          </div>
+        </ng-container>
+        <div *ngIf="readBy.length > 0 && checkReadBy" class="read-by-box text-right">
+
+
+          <div *ngFor="let user of readBy" class="read-by">
+            <ng-container >
+              Read by {{user}}
+            </ng-container>
+
+          </div>
+        </div>
+
+        <div *ngFor="let userTyping of typingBy" class="read-by text-center">
+          <ng-container *ngIf="userTyping != username">
+            {{userTyping}} is Typing
+          </ng-container>
+
+        </div>
+
+        <div class="message-padding">
+
+        </div>
+        <div class="message-padding">
+
+        </div>
+        <div #messagePadding class="messageJump">
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

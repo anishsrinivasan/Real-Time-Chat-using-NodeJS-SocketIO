@@ -25,6 +25,8 @@ export class HomePageComponent implements OnInit {
   checkBrowserActiveFlag = true;
   checkReadBy = true;
   typingBy = [];
+  avatarList;
+  avatarId = 1;
   constructor(private chat: ChatService, public snackBar: MatSnackBar) { }
 
   ngOnInit() {
@@ -36,7 +38,29 @@ export class HomePageComponent implements OnInit {
     this.newMessage();
     this.messageRead();
     this.onTyping();
+    this.getAvatarList()
   }
+
+
+  getAvatarList(){
+    this.avatarList = [
+      {id:'1',path:'../../assets/images/avatars/boy.png'},
+      {id:'2',path:'../../assets/images/avatars/man-1.png'},
+      {id:'3',path:'../../assets/images/avatars/girl.png'},
+      {id:'4',path:'../../assets/images/avatars/girl-1.png'},
+    ]
+  }
+
+  setAvatar(item){
+    this.avatarId = item.id;
+   
+  }
+
+  getAvatarPath(image){
+    const index = this.avatarList.findIndex(avatar => avatar.id == image)
+    return this.avatarList[index].path
+  }
+
 
   setUsername() {
     if (this.usersList.includes(this.username)) {
@@ -78,7 +102,8 @@ export class HomePageComponent implements OnInit {
   sendMessage() {
     this.socket.emit('sendMessage', {
       senderId: this.username,
-      msg: this.message
+      msg: this.message,
+      avatarId:this.avatarId
     })
     this.message = '';
   }
@@ -87,6 +112,7 @@ export class HomePageComponent implements OnInit {
     this.socket.on('newMessage', (data) => {
       if (data != 'hello friends!') {
         this.updateNotification(data)
+        data.timestamp = new Date()
         this.messages.push(data)
         this.readBy = [];
         this.goToMessagePadding()

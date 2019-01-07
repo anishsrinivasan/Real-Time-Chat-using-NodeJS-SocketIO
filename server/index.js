@@ -10,6 +10,16 @@ var connections = [];
 var users = [];
 var usersList = {};
 var conversations = [];
+
+// Mongoose
+const mongoose = require('mongoose')
+mongoose.Promise = global.Promise;
+mongoose.connect('mongodb://tester:tester123@ds121099.mlab.com:21099/chat', { useNewUrlParser: true });
+const connection = mongoose.connection;
+connection.once('open',() => {
+  console.log('Connection Established')
+})
+var Issue = require('./models/Issue')
 // Create Server for IO
 var server = http.Server(app);
 const io = socketIo(server)
@@ -41,6 +51,7 @@ io.on('connection',(socket) => {
 
   socket.on('sendMessage',(data)=> {
     console.log(data)
+    updateConversation(data)
     io.emit('newMessage',data)
 
   })
@@ -61,7 +72,36 @@ io.on('connection',(socket) => {
 
 })
 
+// Posts
 
+router.get('/getMessages', function (req, res,next) {
+  console.log('Getting Messages')
+  Issue.find({}, function (err, data) {
+ 
+      if(err){
+        console.log(err)
+        res.send('Error')
+      }else{
+       // console.log(data)
+        console.log('No Errors ',new Date())
+        res.json(data);
+      }
+     
+  });
+});
+
+function updateConversation(data){
+  let issue = new Issue({
+    senderId:data.senderId,
+    msg:data.msg,
+    avatarId:data.avatarId,
+    timestamp:new Date()
+  })
+  issue.save().then(issue => {
+console.log('Message Updated to DB')
+  }).catch(err => {
+  })
+}
 
 function updateUserNames(){
   io.emit('getUsers',users)

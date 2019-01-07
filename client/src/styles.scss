@@ -8,4 +8,101 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 .full-width{
     width:100%;
+}.users-container,.chat-container {
+    padding:5%;
+   
+}
+
+
+.user-box{
+    padding:5%;
+    background-color:#ecf0f1;
+}
+
+.users-container{
+    background-color:#ecf0f1;
+    position: sticky;
+    top: 0px;
+    height:100vh;
+}
+
+.chat-container{
+    background-color: #bdc3c7;
+    
+}
+
+
+.send-message{
+    position: fixed;
+    bottom: 0;
+    height: 100px;
+    width: 100%;
+    left: 0;
+    bottom: 100px;
+    padding: 5%;
+}
+
+.user-item {
+    cursor: pointer;
+    padding: 15px;
+    border-radius: 20px;
+    margin: 10px;
+    width:70%;
+    background-color: white;
+}
+
+.messages {
+    height:100%;
+}
+
+.message-item {
+    padding: 10px;
+    border-radius: 20px;
+    margin: 10px;
+    width:70%
+}
+
+.message-box{
+    padding:2%;
+    background-color: #ecf0f1;
+}
+
+.sender-item {
+    background-color: #8e44ad;
+    color:#ffffff;
+    text-align:right;
+
+}
+
+.receiver-item {
+    background-color: #f39c12;
+
+}
+
+.senderId{
+    font-size:12px;
+    font-weight: 500;
+}
+
+.timestamp{
+    font-size:12px;
+}
+
+.message-padding{
+    padding-top:12%;
+}
+
+
+
+@media screen and (max-width: 768px) {
+    .users-container{
+        position: relative;
+        height:100%;
+    }
+
+    .message-padding{
+        padding:20%;
+    }
+
+
 }
