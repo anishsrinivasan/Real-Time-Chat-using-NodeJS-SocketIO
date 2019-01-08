@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ChatService } from '../chat.service'
 import * as io from 'socket.io-client';
 import { MatSnackBar } from '@angular/material';
-
+declare var TweenMax,TimelineMax,Sine,Linear,Power2;
 @Component({
   selector: 'app-home-page',
   templateUrl: './home-page.component.html',
@@ -27,6 +27,7 @@ export class HomePageComponent implements OnInit {
   typingBy = [];
   avatarList;
   avatarId = 1;
+ 
   constructor(private chat: ChatService, public snackBar: MatSnackBar) { }
 
   ngOnInit() {
@@ -39,6 +40,7 @@ export class HomePageComponent implements OnInit {
     this.messageRead();
     this.onTyping();
     this.getAvatarList()
+ 
   }
 
 
@@ -66,7 +68,7 @@ export class HomePageComponent implements OnInit {
     if (this.usersList.includes(this.username)) {
       this.openSnackBar('Please Select Another User Name')
     } else {
-      this.chat.newUser(this.username)
+      this.chat.newUser(this.username,this.avatarId)
       this.usernameFlag = true;
 
       if (this.checkBrowserActiveFlag) {
@@ -79,9 +81,9 @@ export class HomePageComponent implements OnInit {
   getUsers() {
     this.socket.on('getUsers', data => {
       data.forEach(doc => {
-        if (!this.usersList.includes(doc)) {
+        if (!this.usersList.includes(doc.username)) {
           this.setUsers(doc)
-          this.usersList.push(doc)
+          this.usersList.push(doc.username)
         }
 
       })
@@ -93,9 +95,21 @@ export class HomePageComponent implements OnInit {
 
   setUsers(doc) {
     this.users.push({
-      username: doc,
-      userCount: 0
+      username: doc.username,
+      userCount: 0,
+      avatarId:doc.avatarId
+
     })
+  }
+
+  logout(){
+    this.usernameFlag = false;
+    this.username = ''
+    this.avatarId = 1;
+    this.typingBy = []
+    this.usersList = []
+    this.users = []
+    this.readBy = []
   }
 
 
@@ -115,7 +129,10 @@ export class HomePageComponent implements OnInit {
         data.timestamp = new Date()
         this.messages.push(data)
         this.readBy = [];
-        this.goToMessagePadding()
+        setTimeout(() => {
+          this.goToMessagePadding()
+        },1000)
+        
         if (data.senderId != this.username)
           this.openSnackBar('New Message from ' + data.senderId + '')
       }
@@ -199,6 +216,7 @@ export class HomePageComponent implements OnInit {
     this.messagePadding.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'start' });
 
   }
+
 
 
 }

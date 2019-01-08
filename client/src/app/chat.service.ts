@@ -16,8 +16,11 @@ export class ChatService {
     })
   }
 
-  newUser(username){
-    this.socket.emit('newUser',username)
+  newUser(username,avatarId){
+    this.socket.emit('newUser',{
+      username:username,
+      avatarId:avatarId
+    })
   }
 
   getUsers(): Observable <any>{

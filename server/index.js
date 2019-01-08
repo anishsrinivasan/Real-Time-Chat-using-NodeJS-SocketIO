@@ -31,10 +31,10 @@ io.on('connection',(socket) => {
 
 
   socket.on('newUser',(data)=> {
-    socket.username = data;
-    let username = data;
+    socket.username = data.username;
+    let username = data.username;
     socket.join('room');
-    addToUsers(socket,username)
+    addToUsers(socket,data)
     updateUserNames();
   })
 
@@ -110,9 +110,13 @@ function updateUserNames(){
 
 
 
-function addToUsers(socket,username){
-users.push(username)
-usersList[username]=socket;
+function addToUsers(socket,data){
+let userObj = {
+  username:data.username,
+  avatarId:data.avatarId
+}
+users.push(userObj)
+usersList[data.username]=socket;
 
 }
 

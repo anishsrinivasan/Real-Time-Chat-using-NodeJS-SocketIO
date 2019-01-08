@@ -1,19 +1,42 @@
 <div class="container-fluid main-container">
   <div class="row">
     <div class="col-md-4 users-container">
-      <div *ngIf="usernameFlag" class="div">
-        Hello, {{username}}
-      </div>
-      <hr>
-      <h3>Users</h3>
-      <hr>
-      <div class="user-list">
 
+      <div *ngIf="!usernameFlag" class="splash-screen animated bounceInLeft">
+        <h3>Hola!</h3>
+        <span>Not a Chat App!</span>
+
+      </div>
+
+      <div *ngIf="usernameFlag" class="div animated zoomInLeft">
+        Hello, {{username}}
+
+        <div class="avatar-img text-center">
+          <img class="chat-avatar" [src]="getAvatarPath(avatarId)">
+        </div>
+        <br>
+        <p class="text-center">
+          <button mat-raised-button (click)="logout()" color="primary">Logout</button>
+
+        </p>
+      </div>
+
+      <div *ngIf="usernameFlag" class="user-list animated zoomInLeft">
+        <hr>
+        <h4>Users</h4>
+        <hr>
         <ng-container *ngIf="checkUserNotifications">
           <ng-container *ngFor="let user of users">
             <ng-container *ngIf="user.username != username">
-              <div (click)="clearUserCount(user)" class="user-item">
-                {{user.username}} - <span>{{user.userCount}}</span>
+              <div (click)="clearUserCount(user)" class="user-item d-flex align-items-center">
+
+                <div class="avatar-img text-center">
+                  <img class="chat-avatar" [src]="getAvatarPath(user.avatarId)">
+                </div>
+                <div class="user-info">
+                  {{user.username}} - <span>{{user.userCount}}</span>
+                </div>
+
               </div>
             </ng-container>
           </ng-container>
@@ -37,11 +60,9 @@
     <div class="col-md-8 chat-container">
       <div class="chat-box">
 
-        <div *ngIf="!usernameFlag" class="username ">
+        <div *ngIf="!usernameFlag" class="username animated bounceInRight">
 
           <div class="user-box text-center">
-            <h4>Hola!</h4>
-            <hr>
             <mat-form-field class="example-full-width">
               <input matInput [(ngModel)]="username" (keyup.enter)="setUsername()" placeholder="Enter your Username"
                 value="Sushi">
@@ -52,7 +73,7 @@
             <br>
             <div class="avatar-list">
               <div class="row">
-                <div (click)="setAvatar(avatar)" *ngFor="let avatar of avatarList" class="col-md-3">
+                <div (click)="setAvatar(avatar)" *ngFor="let avatar of avatarList" class="col-md-3 col-sm-6 avatar-box">
                   <img class="avatar-item" [ngClass]="{'full-opacity': avatar.id == avatarId}" [src]="avatar.path">
                 </div>
 
@@ -65,12 +86,11 @@
 
             <h6>Options</h6>
             <br>
-            <section class="example-section">
+            <section class="example-section d-flex justify-content-around">
               <mat-checkbox class="example-margin" [(ngModel)]="checkReadBy">Read By</mat-checkbox>
               <br>
               <mat-checkbox class="example-margin" [(ngModel)]="checkUserNotifications">User Notifications</mat-checkbox>
               <br>
-              <mat-checkbox class="example-margin" [(ngModel)]="checkBrowserActiveFlag">Check Browser Active</mat-checkbox>
 
             </section>
             <hr>
@@ -84,7 +104,7 @@
 
 
 
-        <div *ngIf="usernameFlag" class="messages d-flex flex-column">
+        <div *ngIf="usernameFlag" class="messages d-flex flex-column animated zoomInDown">
           <ng-container *ngFor="let message of messages">
 
             <ng-container *ngIf="message.senderId != username">
@@ -156,7 +176,7 @@
   </div>
 </div>
 
-<div *ngIf="usernameFlag" class="send-message">
+<div *ngIf="usernameFlag" class="send-message animated zoomInDown">
 
 
   <div class="row">
